@@ -1,26 +1,8 @@
-/* =================================================
- * This file is part of the TTK qmmp plugin project
- * Copyright (C) 2015 - 2020 Greedysky Studio
-
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
-
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License along
- * with this program; If not, see <http://www.gnu.org/licenses/>.
- ================================================= */
-
 #include "asaphelper.h"
 
 AsapHelper::AsapHelper(const QString &path)
+    : m_path(path)
 {
-    m_path = path;
     m_info = (asap_info_t*)calloc(sizeof(asap_info_t), 1);
 }
 
@@ -43,32 +25,38 @@ void AsapHelper::close()
 
 bool AsapHelper::initialize()
 {
-    m_info->asap = ASAP_New();
-    ASAP_DetectSilence(m_info->asap, 5);
-
-    FILE *file = stdio_open(m_path.toLocal8Bit().constData());
+    FILE *file = stdio_open(qPrintable(m_path));
     if(!file)
     {
+        qWarning("AsapHelper: open file failed");
         return false;
     }
 
     int size = stdio_length(file);
     if(size <= 0 || size > 256 * 1024)
     {
+        qWarning("AsapHelper: file size invalid");
+        stdio_close(file);
         return false;
     }
 
     unsigned char *module = (unsigned char *)malloc(size);
     if(!module)
     {
+        qWarning("AsapHelper: file data read error");
+        stdio_close(file);
         return false;
     }
 
     stdio_read(module, size, 1, file);
     stdio_close(file);
 
-    if(!ASAP_Load(m_info->asap, m_path.toLocal8Bit().constData(), module, size))
+    m_info->asap = ASAP_New();
+    ASAP_DetectSilence(m_info->asap, 5);
+
+    if(!ASAP_Load(m_info->asap, qPrintable(m_path), module, size))
     {
+        qWarning("AsapHelper: ASAP_Load error");
         free(module);
         return false;
     }
@@ -81,6 +69,7 @@ bool AsapHelper::initialize()
     // char filename[128]; cibool loops[32]; char title[128]; };
     if(!ASAP_PlaySong(m_info->asap, ASAPInfo_GetDefaultSong(info), 360000))
     {
+        qWarning("AsapHelper: ASAP_PlaySong error");
         return false;
     }
 
@@ -92,7 +81,7 @@ bool AsapHelper::initialize()
     m_info->channels = ASAPInfo_GetChannels(info);
     m_info->sample_rate = ASAP_SAMPLE_RATE;
     m_info->bits_per_sample = 32;
-    m_info->bitrate = size * 8.0 / m_info->length;
+    m_info->bitrate = size * 8.0 / m_info->length + 1.0f;
 
     return true;
 }
@@ -112,7 +101,7 @@ int AsapHelper::bitrate() const
     return m_info->bitrate;
 }
 
-int AsapHelper::samplerate() const
+int AsapHelper::sampleRate() const
 {
     return m_info->sample_rate;
 }
@@ -129,6 +118,11 @@ int AsapHelper::bitsPerSample() const
 
 int AsapHelper::read(unsigned char *buf, int size)
 {
+    if(ASAP_GetPosition(m_info->asap) >= totalTime())
+    {
+        return 0;
+    }
+
     return ASAP_Generate(m_info->asap, buf, size, ASAPSampleFormat_S16_L_E);
 }
 

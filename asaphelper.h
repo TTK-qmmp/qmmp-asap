@@ -1,6 +1,6 @@
 /* =================================================
  * This file is part of the TTK qmmp plugin project
- * Copyright (C) 2015 - 2020 Greedysky Studio
+ * Copyright (C) 2015 - 2021 Greedysky Studio
 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +40,8 @@ typedef struct {
 class AsapHelper
 {
 public:
-    AsapHelper(const QString &path);
-    virtual ~AsapHelper();
+    explicit AsapHelper(const QString &path);
+    ~AsapHelper();
 
     void close();
 
@@ -50,7 +50,7 @@ public:
     void seek(qint64 time);
 
     int bitrate() const;
-    int samplerate() const;
+    int sampleRate() const;
     int channels() const;
     int bitsPerSample() const;
 
@@ -65,6 +65,7 @@ private:
     QString m_path;
     asap_info_t *m_info;
     QVariantMap m_meta;
+
 };
 
 #endif

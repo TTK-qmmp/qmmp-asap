@@ -1,6 +1,6 @@
 /* =================================================
  * This file is part of the TTK qmmp plugin project
- * Copyright (C) 2015 - 2020 Greedysky Studio
+ * Copyright (C) 2015 - 2021 Greedysky Studio
 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ class AsapHelper;
 class DecoderAsap : public Decoder
 {
 public:
-    DecoderAsap(const QString &path);
+    explicit DecoderAsap(const QString &path);
     virtual ~DecoderAsap();
 
     // Standard Decoder API
@@ -41,6 +41,7 @@ public:
 
 private:
     AsapHelper* m_asap;
+
 };
 
 #endif // DECODER_ASAP_H
