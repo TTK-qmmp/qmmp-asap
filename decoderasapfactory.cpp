@@ -3,6 +3,8 @@
 #include "decoderasapfactory.h"
 #include "asapmetadatamodel.h"
 
+#include <QMessageBox>
+
 bool DecoderAsapFactory::canDecode(QIODevice *) const
 {
     return false;
@@ -70,4 +72,21 @@ MetaDataModel* DecoderAsapFactory::createMetaDataModel(const QString &path, bool
 {
     Q_UNUSED(readOnly);
     return new AsapMetaDataModel(path);
+}
+
+void DecoderAsapFactory::showSettings(QWidget *parent)
+{
+    Q_UNUSED(parent);
+}
+
+void DecoderAsapFactory::showAbout(QWidget *parent)
+{
+    QMessageBox::about (parent, tr("About Asap Reader Plugin"),
+                        tr("Qmmp Asap Reader Plugin")+"\n"+
+                        tr("Written by: Greedysky <greedysky@163.com>"));
+}
+
+QString DecoderAsapFactory::translation() const
+{
+    return QString();
 }
