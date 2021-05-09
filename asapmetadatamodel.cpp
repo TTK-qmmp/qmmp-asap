@@ -10,7 +10,9 @@ AsapMetaDataModel::AsapMetaDataModel(const QString &path)
 AsapMetaDataModel::~AsapMetaDataModel()
 {
     while(!m_tags.isEmpty())
+    {
         delete m_tags.takeFirst();
+    }
     delete m_asap;
 }
 
@@ -25,7 +27,7 @@ QList<MetaDataItem> AsapMetaDataModel::extraProperties() const
 
     if(m_asap->initialize())
     {
-        const QVariantMap &data = m_asap->readMetaTags();
+        const QMap<QString, QString> &data = m_asap->readMetaTags();
         for(const QString &key : data.keys())
         {
             ep << MetaDataItem(key, data[key]);
