@@ -40,8 +40,8 @@ public:
     virtual void seek(qint64 time) override;
 
 private:
-    AsapHelper* m_asap;
+    AsapHelper* m_helper;
 
 };
 
-#endif // DECODER_ASAP_H
+#endif

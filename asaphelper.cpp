@@ -8,10 +8,10 @@ AsapHelper::AsapHelper(const QString &path)
 
 AsapHelper::~AsapHelper()
 {
-    close();
+    deinit();
 }
 
-void AsapHelper::close()
+void AsapHelper::deinit()
 {
     if(m_info)
     {
@@ -25,42 +25,24 @@ void AsapHelper::close()
 
 bool AsapHelper::initialize()
 {
-    FILE *file = stdio_open(qPrintable(m_path));
-    if(!file)
+    QFile file(m_path);
+    if(!file.open(QFile::ReadOnly))
     {
         qWarning("AsapHelper: open file failed");
         return false;
     }
 
-    const int64_t size = stdio_length(file);
-    if(size <= 0 || size > 256 * 1024)
-    {
-        qWarning("AsapHelper: file size invalid");
-        stdio_close(file);
-        return false;
-    }
-
-    unsigned char *module = (unsigned char *)malloc(size);
-    if(!module)
-    {
-        qWarning("AsapHelper: file data read error");
-        stdio_close(file);
-        return false;
-    }
-
-    stdio_read(module, size, 1, file);
-    stdio_close(file);
+    const qint64 size = file.size();
+    const QByteArray module = file.readAll();
 
     m_info->asap = ASAP_New();
     ASAP_DetectSilence(m_info->asap, 5);
 
-    if(!ASAP_Load(m_info->asap, qPrintable(m_path), module, size))
+    if(!ASAP_Load(m_info->asap, qPrintable(m_path), (unsigned char *)module.constData(), size))
     {
         qWarning("AsapHelper: ASAP_Load error");
-        free(module);
         return false;
     }
-    free(module);
 
     ASAPInfo *info =(ASAPInfo *)ASAP_GetInfo(m_info->asap);
     //struct ASAPInfo { int channels; int covoxAddr; int defaultSong; int fastplay; int headerLen;
@@ -73,14 +55,13 @@ bool AsapHelper::initialize()
         return false;
     }
 
-    m_meta.insert("title", ASAPInfo_GetTitle(info));
-    m_meta.insert("artist", ASAPInfo_GetAuthor(info));
-    m_meta.insert("year", QString::number(ASAPInfo_GetYear(info)));
+    m_metaData.insert(Qmmp::TITLE, ASAPInfo_GetTitle(info));
+    m_metaData.insert(Qmmp::ARTIST, ASAPInfo_GetAuthor(info));
+    m_metaData.insert(Qmmp::YEAR, QString::number(ASAPInfo_GetYear(info)));
 
     m_info->length = ASAPInfo_GetDuration(info, ASAPInfo_GetDefaultSong(info));
     m_info->channels = ASAPInfo_GetChannels(info);
     m_info->bitrate = size * 8.0 / m_info->length + 1.0f;
-
     return true;
 }
 
@@ -124,7 +105,8 @@ int AsapHelper::read(unsigned char *buf, int size)
     return ASAP_Generate(m_info->asap, buf, size, ASAPSampleFormat_S16_L_E);
 }
 
-QMap<QString, QString> AsapHelper::readMetaTags() const
+const QMap<Qmmp::MetaData, QString> &AsapHelper::readMetaData() const
 {
-    return m_meta;
+    return m_metaData;
 }
+
