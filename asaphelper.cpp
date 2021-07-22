@@ -61,11 +61,11 @@ bool AsapHelper::initialize()
 
     m_info->length = ASAPInfo_GetDuration(info, ASAPInfo_GetDefaultSong(info));
     m_info->channels = ASAPInfo_GetChannels(info);
-    m_info->bitrate = size * 8.0 / m_info->length + 1.0f;
+    m_info->bitrate = size * 8.0 / totalTime() + 1.0f;
     return true;
 }
 
-int AsapHelper::totalTime() const
+qint64 AsapHelper::totalTime() const
 {
     return m_info->length;
 }
@@ -95,14 +95,14 @@ int AsapHelper::bitsPerSample() const
     return 16;
 }
 
-int AsapHelper::read(unsigned char *buf, int size)
+qint64 AsapHelper::read(unsigned char *data, qint64 maxSize)
 {
     if(ASAP_GetPosition(m_info->input) >= totalTime())
     {
         return 0;
     }
 
-    return ASAP_Generate(m_info->input, buf, size, ASAPSampleFormat_S16_L_E);
+    return ASAP_Generate(m_info->input, data, maxSize, ASAPSampleFormat_S16_L_E);
 }
 
 const QMap<Qmmp::MetaData, QString> &AsapHelper::readMetaData() const
