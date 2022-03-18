@@ -1,5 +1,5 @@
-#include "asaphelper.h"
 #include "decoder_asap.h"
+#include "asaphelper.h"
 
 DecoderAsap::DecoderAsap(const QString &path)
     : Decoder()
@@ -29,7 +29,7 @@ bool DecoderAsap::initialize()
     }
 
     configure(rate, channels, Qmmp::PCM_S16LE);
-    qDebug("DecoderAsap: initialize succes");
+    qDebug("DecoderAsap: initialize success");
     return true;
 }
 
@@ -48,7 +48,7 @@ qint64 DecoderAsap::read(unsigned char *data, qint64 maxSize)
     return m_helper->read(data, maxSize);
 }
 
-void DecoderAsap::seek(qint64 pos)
+void DecoderAsap::seek(qint64 time)
 {
-    m_helper->seek(pos);
+    m_helper->seek(time);
 }

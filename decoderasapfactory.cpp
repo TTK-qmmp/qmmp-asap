@@ -1,6 +1,6 @@
+#include "decoderasapfactory.h"
 #include "asaphelper.h"
 #include "decoder_asap.h"
-#include "decoderasapfactory.h"
 #include "asapmetadatamodel.h"
 
 #include <QMessageBox>
@@ -13,14 +13,15 @@ bool DecoderAsapFactory::canDecode(QIODevice *) const
 DecoderProperties DecoderAsapFactory::properties() const
 {
     DecoderProperties properties;
-    properties.name = "Asap Plugin";
+    properties.name = tr("Asap Plugin");
     properties.shortName = "asap";
-    properties.filters << "*.sap";
     properties.filters << "*.cm3" << "*.cmc" << "*.cmr" << "*.cms";
-    properties.filters << "*.dmc" << "*.dlt";
-    properties.filters << "*.mpd" << "*.mpt" << "*.rmt" << "*.tm2" << "*.tm8" << "*.tmc";
+    properties.filters << "*.dlt" << "*.dmc";
+    properties.filters << "*.fc";
+    properties.filters << "*.mpd" << "*.mpt" << "*.rmt";
+    properties.filters << "*.sap";
+    properties.filters << "*.tm2" << "*.tm8" << "*.tmc";
     properties.description = "Another Slight Atari Player File";
-    properties.protocols << "file";
     properties.noInput = true;
     return properties;
 }
@@ -34,7 +35,6 @@ Decoder *DecoderAsapFactory::create(const QString &path, QIODevice *input)
 QList<TrackInfo*> DecoderAsapFactory::createPlayList(const QString &path, TrackInfo::Parts parts, QStringList *)
 {
     TrackInfo *info = new TrackInfo(path);
-
     if(parts == TrackInfo::Parts())
     {
         return QList<TrackInfo*>() << info;
@@ -61,11 +61,10 @@ QList<TrackInfo*> DecoderAsapFactory::createPlayList(const QString &path, TrackI
         info->setValue(Qmmp::BITRATE, helper.bitrate());
         info->setValue(Qmmp::SAMPLERATE, helper.sampleRate());
         info->setValue(Qmmp::CHANNELS, helper.channels());
-        info->setValue(Qmmp::BITS_PER_SAMPLE, helper.bitsPerSample());
+        info->setValue(Qmmp::BITS_PER_SAMPLE, helper.depth());
         info->setValue(Qmmp::FORMAT_NAME, "Asap");
         info->setDuration(helper.totalTime());
     }
-
     return QList<TrackInfo*>() << info;
 }
 
