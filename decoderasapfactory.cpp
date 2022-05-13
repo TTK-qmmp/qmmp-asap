@@ -1,13 +1,19 @@
 #include "decoderasapfactory.h"
 #include "asaphelper.h"
 #include "decoder_asap.h"
-#include "asapmetadatamodel.h"
 
 #include <QMessageBox>
 
-bool DecoderAsapFactory::canDecode(QIODevice *) const
+bool DecoderAsapFactory::canDecode(QIODevice *input) const
 {
-    return false;
+    QFile *file = static_cast<QFile*>(input);
+    if(!file)
+    {
+        return false;
+    }
+
+    AsapHelper helper(file->fileName());
+    return helper.initialize();
 }
 
 DecoderProperties DecoderAsapFactory::properties() const
@@ -22,6 +28,7 @@ DecoderProperties DecoderAsapFactory::properties() const
     properties.filters << "*.sap";
     properties.filters << "*.tm2" << "*.tm8" << "*.tmc";
     properties.description = "Another Slight Atari Player File";
+    properties.protocols << "file";
     properties.noInput = true;
     return properties;
 }
@@ -49,11 +56,9 @@ QList<TrackInfo*> DecoderAsapFactory::createPlayList(const QString &path, TrackI
 
     if(parts & TrackInfo::MetaData)
     {
-        const QMap<Qmmp::MetaData, QString> metaData(helper.readMetaData());
-        for(auto itr = metaData.begin(); itr != metaData.end(); ++itr)
-        {
-            info->setValue(itr.key(), itr.value());
-        }
+        info->setValue(Qmmp::TITLE, helper.title());
+        info->setValue(Qmmp::ARTIST, helper.author());
+        info->setValue(Qmmp::YEAR, helper.year());
     }
 
     if(parts & TrackInfo::Properties)
@@ -62,7 +67,7 @@ QList<TrackInfo*> DecoderAsapFactory::createPlayList(const QString &path, TrackI
         info->setValue(Qmmp::SAMPLERATE, helper.sampleRate());
         info->setValue(Qmmp::CHANNELS, helper.channels());
         info->setValue(Qmmp::BITS_PER_SAMPLE, helper.depth());
-        info->setValue(Qmmp::FORMAT_NAME, "Asap");
+        info->setValue(Qmmp::FORMAT_NAME, "Asap Audio");
         info->setDuration(helper.totalTime());
     }
     return QList<TrackInfo*>() << info;
@@ -70,8 +75,9 @@ QList<TrackInfo*> DecoderAsapFactory::createPlayList(const QString &path, TrackI
 
 MetaDataModel* DecoderAsapFactory::createMetaDataModel(const QString &path, bool readOnly)
 {
+    Q_UNUSED(path);
     Q_UNUSED(readOnly);
-    return new AsapMetaDataModel(path);
+    return nullptr;
 }
 
 void DecoderAsapFactory::showSettings(QWidget *parent)

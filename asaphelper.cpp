@@ -29,7 +29,8 @@ bool AsapHelper::initialize()
     }
 
     const qint64 size = file.size();
-    const QByteArray module = file.readAll();
+    const QByteArray &module = file.readAll();
+    file.close();
 
     m_input = ASAP_New();
     ASAP_DetectSilence(m_input, 5);
@@ -51,13 +52,11 @@ bool AsapHelper::initialize()
         return false;
     }
 
-    m_metaData.insert(Qmmp::TITLE, ASAPInfo_GetTitle(info));
-    m_metaData.insert(Qmmp::ARTIST, ASAPInfo_GetAuthor(info));
-    m_metaData.insert(Qmmp::YEAR, QString::number(ASAPInfo_GetYear(info)));
-
+    m_title = ASAPInfo_GetTitle(info);
+    m_author = ASAPInfo_GetAuthor(info);
+    m_year = QString::number(ASAPInfo_GetYear(info));
     m_length = ASAPInfo_GetDuration(info, ASAPInfo_GetDefaultSong(info));
     m_channels = ASAPInfo_GetChannels(info);
-    m_bitrate = size * 8.0 / totalTime() + 1.0f;
     return true;
 }
 

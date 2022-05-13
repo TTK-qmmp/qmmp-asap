@@ -19,12 +19,10 @@
 #ifndef ASAPHELPER_H
 #define ASAPHELPER_H
 
-extern "C" {
-#include <libasap/asap.h>
-}
 #include <QMap>
 #include <QFile>
 #include <qmmp/qmmp.h>
+#include <libasap/asap.h>
 
 /*!
  * @author Greedysky <greedysky@163.com>
@@ -41,21 +39,25 @@ public:
     inline void seek(qint64 time) { ASAP_Seek(m_input, time); }
     inline qint64 totalTime() const { return m_length; }
 
-    inline int bitrate() const { return m_bitrate; }
+    inline int bitrate() const { return 8; }
     inline int sampleRate() const { return ASAP_SAMPLE_RATE; }
     inline int channels() const { return m_channels; }
     inline int depth() const { return 16; }
 
     qint64 read(unsigned char *data, qint64 maxSize);
-    inline const QMap<Qmmp::MetaData, QString> &readMetaData() const { return m_metaData; }
+
+    inline QString title() const { return m_title; }
+    inline QString author() const { return m_author; }
+    inline QString year() const { return m_year; }
 
 private:
     QString m_path;
     ASAP *m_input = nullptr;
     int m_length = 0;
-    int m_bitrate = 0;
     int m_channels = 0;
-    QMap<Qmmp::MetaData, QString> m_metaData;
+    QString m_title;
+    QString m_author;
+    QString m_year;
 
 };
 
