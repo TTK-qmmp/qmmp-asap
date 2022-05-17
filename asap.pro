@@ -1,8 +1,5 @@
 include($$PWD/../../plugins.pri)
 
-QMAKE_CXXFLAGS += -std=c++11
-QMAKE_CFLAGS += -std=gnu11
-
 TARGET = $$PLUGINS_PREFIX/Input/asap
 
 HEADERS += decoderasapfactory.h \
