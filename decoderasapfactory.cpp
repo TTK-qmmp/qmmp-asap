@@ -30,6 +30,7 @@ DecoderProperties DecoderAsapFactory::properties() const
     properties.description = "Another Slight Atari Player File";
     properties.protocols << "file";
     properties.noInput = true;
+    properties.hasAbout = true;
     return properties;
 }
 
