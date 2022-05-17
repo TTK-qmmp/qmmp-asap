@@ -87,9 +87,9 @@ void DecoderAsapFactory::showSettings(QWidget *parent)
 
 void DecoderAsapFactory::showAbout(QWidget *parent)
 {
-    QMessageBox::about (parent, tr("About Asap Reader Plugin"),
-                        tr("Qmmp Asap Reader Plugin")+"\n"+
-                        tr("Written by: Greedysky <greedysky@163.com>"));
+    QMessageBox::about(parent, tr("About Asap Reader Plugin"),
+                       tr("Qmmp Asap Reader Plugin") + "\n" +
+                       tr("Written by: Greedysky <greedysky@163.com>"));
 }
 
 QString DecoderAsapFactory::translation() const
