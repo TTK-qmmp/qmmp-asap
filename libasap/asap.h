@@ -137,7 +137,7 @@ void ASAPInfo_Delete(ASAPInfo *self);
 /**
  * ASAP version - minor part.
  */
-#define ASAPInfo_VERSION_MINOR 2
+#define ASAPInfo_VERSION_MINOR 3
 
 /**
  * ASAP version - micro part.
@@ -147,17 +147,17 @@ void ASAPInfo_Delete(ASAPInfo *self);
 /**
  * ASAP version as a string.
  */
-#define ASAPInfo_VERSION "5.2.0"
+#define ASAPInfo_VERSION "5.3.0"
 
 /**
  * Years ASAP was created in.
  */
-#define ASAPInfo_YEARS "2005-2021"
+#define ASAPInfo_YEARS "2005-2023"
 
 /**
  * Short credits for ASAP.
  */
-#define ASAPInfo_CREDITS "Another Slight Atari Player (C) 2005-2021 Piotr Fusik\nCMC, MPT, TMC, TM2 players (C) 1994-2005 Marcin Lewandowski\nRMT player (C) 2002-2005 Radek Sterba\nDLT player (C) 2009 Marek Konopka\nCMS player (C) 1999 David Spilka\nFC player (C) 2011 Jerzy Kut\n"
+#define ASAPInfo_CREDITS "Another Slight Atari Player (C) 2005-2023 Piotr Fusik\nCMC, MPT, TMC, TM2 players (C) 1994-2005 Marcin Lewandowski\nRMT player (C) 2002-2005 Radek Sterba\nDLT player (C) 2009 Marek Konopka\nCMS player (C) 1999 David Spilka\nFC player (C) 2011 Jerzy Kut\n"
 
 /**
  * Short license notice.
@@ -374,10 +374,23 @@ bool ASAPInfo_GetLoop(const ASAPInfo *self, int song);
 bool ASAPInfo_SetLoop(ASAPInfo *self, int song, bool loop);
 
 /**
- * Returns <code>true</code> for NTSC song and <code>false</code> for PAL song.
+ * Returns <code>true</code> for an NTSC song and <code>false</code> for a PAL song.
  * @param self This <code>ASAPInfo</code>.
  */
 bool ASAPInfo_IsNtsc(const ASAPInfo *self);
+
+/**
+ * Returns <code>true</code> if NTSC can be set or removed.
+ * @param self This <code>ASAPInfo</code>.
+ */
+bool ASAPInfo_CanSetNtsc(const ASAPInfo *self);
+
+/**
+ * Marks a SAP file as NTSC or PAL.
+ * @param self This <code>ASAPInfo</code>.
+ * @param ntsc <code>true</code> for NTSC, <code>false</code> for PAL.
+ */
+void ASAPInfo_SetNtsc(ASAPInfo *self, bool ntsc);
 
 /**
  * Returns the letter argument for the TYPE SAP tag.
@@ -473,12 +486,6 @@ void ASAPWriter_Delete(ASAPWriter *self);
 #define ASAPWriter_MAX_SAVE_EXTS 3
 
 /**
- * Maximum length of text representation of a duration.
- * Corresponds to the longest format which is <code>"mm:ss.xxx"</code>.
- */
-#define ASAPWriter_MAX_DURATION_LENGTH 9
-
-/**
  * Enumerates possible file types the given module can be written as.
  * Returns the number of extensions written to <code>exts</code>.
  * @param exts Receives filename extensions without the leading dot.
@@ -487,6 +494,12 @@ void ASAPWriter_Delete(ASAPWriter *self);
  * @param moduleLen Length of the file.
  */
 int ASAPWriter_GetSaveExts(const char **exts, const ASAPInfo *info, uint8_t const *module, int moduleLen);
+
+/**
+ * Maximum length of text representation of a duration.
+ * Corresponds to the longest format which is <code>"mm:ss.xxx"</code>.
+ */
+#define ASAPWriter_MAX_DURATION_LENGTH 9
 
 /**
  * Writes text representation of the given duration.
