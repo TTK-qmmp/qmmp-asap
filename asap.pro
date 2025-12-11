@@ -15,8 +15,6 @@ SOURCES += decoderasapfactory.cpp \
            asaphelper.cpp \
            libasap/asap.c
 
-INCLUDEPATH += $$PWD/libasap
-
 #CONFIG += BUILD_PLUGIN_INSIDE
 contains(CONFIG, BUILD_PLUGIN_INSIDE){
     include($$PWD/../../plugins.pri)
