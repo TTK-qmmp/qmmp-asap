@@ -1,5 +1,6 @@
 This is a plugin for Qmmp (1.6.0 or greater) which supports Asap file.
-(Another Slight Atari Player File)
+
+Based on [ASAP](https://sourceforge.net/projects/asap) (Another Slight Atari Player File).
 
 The following packages are required, including development headers,
 which some vendors split into separate packages:

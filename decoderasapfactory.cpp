@@ -98,7 +98,9 @@ void DecoderAsapFactory::showAbout(QWidget *parent)
 {
     QMessageBox::about(parent, tr("About Asap Reader Plugin"),
                        tr("Qmmp Asap Reader Plugin") + "\n" +
-                       tr("Written by: Greedysky <greedysky@163.com>"));
+                       tr("Written by: Greedysky <greedysky@163.com>") + "\n" +
+                       tr("Based on the source code from the ASAP") + "\n" +
+                       tr("Written by Piotr Fusik (C) 2002"));
 }
 
 QString DecoderAsapFactory::translation() const
